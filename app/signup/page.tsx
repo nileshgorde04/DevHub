@@ -18,11 +18,32 @@ export default function SignupPage() {
   const [confirmPassword, setConfirmPassword] = useState("")
   const [agreeTerms, setAgreeTerms] = useState(false)
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    // Handle signup logic here
-    console.log({ name, email, password, confirmPassword, agreeTerms })
-  }
+  // const handleSubmit = (e: React.FormEvent) => {
+  //   e.preventDefault()
+  //   // Handle signup logic here
+  //   console.log({ name, email, password, confirmPassword, agreeTerms })
+  // }
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+  
+    if (password !== confirmPassword) {
+      alert("Passwords do not match!");
+      return;
+    }
+  
+    try {
+      const response = await fetch("http://localhost:8080/api/users/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, password }),
+      });
+  
+      const data = await response.text();
+      alert(data);
+    } catch (error) {
+      console.error("Signup failed:", error);
+    }
+  };
 
   return (
     <div className="container flex items-center justify-center min-h-[calc(100vh-8rem)] py-10">

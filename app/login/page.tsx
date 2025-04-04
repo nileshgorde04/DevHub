@@ -16,12 +16,31 @@ export default function LoginPage() {
   const [password, setPassword] = useState("")
   const [rememberMe, setRememberMe] = useState(false)
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    // Handle login logic here
-    console.log({ email, password, rememberMe })
-  }
-
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+  
+    try {
+      const response = await fetch("http://localhost:8080/api/users/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+  
+      const data = await response.text(); // Assuming backend returns a string message
+  
+      if (response.ok) {
+        alert("Login successful!"); // Handle login success (e.g., redirect, store user data)
+      } else {
+        alert(`Login failed: ${data}`); // Show error message from backend
+      }
+    } catch (error) {
+      console.error("Error during login:", error);
+      alert("An error occurred. Please try again.");
+    }
+  };
+  
   return (
     <div className="container flex items-center justify-center min-h-[calc(100vh-8rem)] py-10">
       <Card className="w-full max-w-md">

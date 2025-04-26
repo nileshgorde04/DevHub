@@ -4,6 +4,7 @@ import type React from "react"
 
 import { useState } from "react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -15,10 +16,11 @@ export default function LoginPage() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [rememberMe, setRememberMe] = useState(false)
+  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-  
+
     try {
       const response = await fetch("http://localhost:8080/api/users/login", {
         method: "POST",
@@ -27,11 +29,12 @@ export default function LoginPage() {
         },
         body: JSON.stringify({ email, password }),
       });
-  
+
       const data = await response.text(); // Assuming backend returns a string message
-  
+
       if (response.ok) {
         alert("Login successful!"); // Handle login success (e.g., redirect, store user data)
+        router.push('/');
       } else {
         alert(`Login failed: ${data}`); // Show error message from backend
       }
@@ -40,7 +43,7 @@ export default function LoginPage() {
       alert("An error occurred. Please try again.");
     }
   };
-  
+
   return (
     <div className="container flex items-center justify-center min-h-[calc(100vh-8rem)] py-10">
       <Card className="w-full max-w-md">
@@ -121,4 +124,3 @@ export default function LoginPage() {
     </div>
   )
 }
-

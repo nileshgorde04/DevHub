@@ -4,6 +4,7 @@ import type React from "react"
 
 import { useState } from "react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -11,12 +12,14 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Github, Twitter } from "lucide-react"
 
+
 export default function SignupPage() {
   const [name, setName] = useState("")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
   const [agreeTerms, setAgreeTerms] = useState(false)
+  const router = useRouter();
 
   // const handleSubmit = (e: React.FormEvent) => {
   //   e.preventDefault()
@@ -39,9 +42,14 @@ export default function SignupPage() {
       });
   
       const data = await response.text();
-      alert(data);
+      if (response.ok) {
+        router.push('/login'); // This will redirect to the login page after successful signup
+      } else {
+        alert(`Signup failed: ${data}`);
+      }
     } catch (error) {
-      console.error("Signup failed:", error);
+      console.error("Error during signup:", error);
+      alert("An error occurred. Please try again.");
     }
   };
 

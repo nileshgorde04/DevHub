@@ -43,6 +43,7 @@ export default function SignupPage() {
   
       const data = await response.text();
       if (response.ok) {
+        alert("User registered successfully!");
         router.push('/login'); // This will redirect to the login page after successful signup
       } else {
         alert(`Signup failed: ${data}`);

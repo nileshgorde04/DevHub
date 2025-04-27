@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
@@ -18,15 +19,47 @@ const navigation = [
   { name: "Discussions", href: "/discussions" },
 ]
 
+
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const pathname = usePathname()
+  const router = useRouter();
 
-  // Close mobile menu when path changes
+  // Checks user login status on mount
   useEffect(() => {
-    setIsOpen(false)
-  }, [pathname])
+    const checkLoginStatus = async () => {
+      try {
+        const response = await fetch('http://localhost:8080/api/users/check-auth', {
+          credentials: "include",
+        })
+        const loggedIn = await response.json();
+        setIsLoggedIn(loggedIn === true); // Explicit check for Boolean true
+      } catch (error) {
+        setIsLoggedIn(false)
+      }
+    }
+    checkLoginStatus()
+  }, [])
+
+
+  // Logs out through backend
+  const handleLogout = async () => {
+    try {
+      const response = await fetch('http://localhost:8080/api/users/logout', {
+        method: "POST",
+        credentials: "include",
+      });
+      if (response.ok) {
+        setIsLoggedIn(false);
+        router.push('/');
+      }
+    } catch (error) {
+      setIsLoggedIn(false);
+    }
+  }
+
+
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -73,7 +106,7 @@ export default function Navbar() {
                 <DropdownMenuItem asChild>
                   <Link href="/dashboard">Dashboard</Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setIsLoggedIn(false)}>Log out</DropdownMenuItem>
+                <DropdownMenuItem onClick={handleLogout}>Log out</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
